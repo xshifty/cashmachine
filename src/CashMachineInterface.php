@@ -5,5 +5,5 @@ namespace Xshifty\CashMachine\Domain;
 
 interface CashMachineInterface
 {
-    public function withdraw(float $value): array;
+    public function withdraw($value): array;
 }

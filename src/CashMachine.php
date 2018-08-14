@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Xshifty\CashMachine\Domain;
 
+use \InvalidArgumentException;
+
 final class CashMachine implements CashMachineInterface
 {
     private $notes;
@@ -12,8 +14,28 @@ final class CashMachine implements CashMachineInterface
         $this->notes = $notes;
     }
 
-    public function withdraw(float $value): array
+    public function withdraw($value): array
     {
+        if (is_null($value)) {
+            return [];
+        }
+
+        $noteValue = floatval($value);
+        if ($noteValue < 0 || !is_numeric($value)) {
+            throw new InvalidArgumentException('Invalid value type for withdraw.');
+        }
+
+        $result = [];
+        while ($noteValue > 0) {
+            $noteResult = $this->notes->getQuantityMax($noteValue);
+            $result = array_merge($result, array_fill(0, $noteResult->getQuantity(), $noteResult->getNote()));
+            $noteValue = $noteResult->getRemainder();
+        }
+
+        if (rsort($result, SORT_NUMERIC)) {
+            return $result;
+        }
+
         return [];
     }
 }

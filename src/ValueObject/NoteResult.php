@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Xshifty\CashMachine\Domain\ValueObject;
 
-final class NoteQuantity
+final class NoteResult
 {
     private $note;
     private $quantity;
