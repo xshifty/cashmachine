@@ -16,8 +16,8 @@ final class Bootstrap
            
             $container = $app->getContainer();
             
-            include __DIR__ . '/config/container.php';
-            include __DIR__ . '/config/routes.php';
+            include __DIR__ . '/../config/container.php';
+            include __DIR__ . '/../config/routes.php';
 
             self::$app = $app;
         }
