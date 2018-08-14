@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Xshifty\CashMachine\Domain;
 
 use Xshifty\CashMachine\Domain\Exception\NoteUnavailableException;
-use Xshifty\CashMachine\Domain\ValueObject\NoteQuantity;
+use Xshifty\CashMachine\Domain\ValueObject\NoteResult;
 
 final class NoteManager implements NoteManagerInterface
 {
@@ -25,19 +25,20 @@ final class NoteManager implements NoteManagerInterface
         return $this->availableNotes;
     }
 
-    public function getQuantityMax(float $value): NoteQuantity
+    public function getQuantityMax(float $value): NoteResult
     {
-        $filtered = array_filter($this->availableNotes, function ($note) use ($value) {
-            return floatval($value) > floatval($note);
+        $filterResult = array_filter($this->availableNotes, function ($note) use ($value) {
+            return floatval($value) >= floatval($note);
         });
 
-        if (count($filtered) < 1) {
+        if (count($filterResult) < 1) {
             throw new NoteUnavailableException('Invalid value');
         }
 
-        $quantity = intval($value / $filtered[0]);
-        $remainder = intval($value % $filtered[0]);
+        $note = reset($filterResult);
+        $quantity = intval($value / $note);
+        $remainder = intval($value % $note);
 
-        return new NoteQuantity($filtered[0], $quantity, $remainder);
+        return new NoteResult($note, $quantity, $remainder);
     }
 }
