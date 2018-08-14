@@ -10,7 +10,6 @@ final class Bootstrap
     {
         if (empty(self::$app)) {
             $app = new \Slim\App([
-                'determineRouteBeforeAppMiddleware' => true,
                 'displayErrorDetails' => true,
             ]);
            
