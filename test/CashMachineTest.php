@@ -49,6 +49,25 @@ final class CashMachineTest extends TestCase
         $this->cashMachine->withdraw('hello');
     }
 
+    public function testBigNotesDataset()
+    {
+        $noteManager = new NoteManager();
+        $noteManager->setAvailableNotes([10000, 5000, 4000, 3000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 1]);
+        $cashMachine = new CashMachine($noteManager);
+
+        $expected = array_fill(0, 51, 10000.0);
+        $expected = array_merge($expected, array_fill(0, 1, 5000.0));
+        $expected = array_merge($expected, array_fill(0, 1, 4000.0));
+        $expected = array_merge($expected, array_fill(0, 1, 200.0));
+        $expected = array_merge($expected, array_fill(0, 1, 100.0));
+        $expected = array_merge($expected, array_fill(0, 1, 50.0));
+        $expected = array_merge($expected, array_fill(0, 1, 20.0));
+        $expected = array_merge($expected, array_fill(0, 1, 5.0));
+        $expected = array_merge($expected, array_fill(0, 3, 1.0));
+
+        $this->assertEquals($cashMachine->withdraw(519378), $expected);
+    }
+
     public function setUp()
     {
         $noteManager = new NoteManager();
