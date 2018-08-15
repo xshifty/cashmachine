@@ -20,16 +20,16 @@ final class CashMachine implements CashMachineInterface
             return [];
         }
 
-        $noteValue = floatval($value);
-        if ($noteValue < 0 || !is_numeric($value)) {
-            throw new InvalidArgumentException('Invalid value type for withdraw.');
+        $value = floatval($value);
+        if ($value <= 0) {
+            throw new InvalidArgumentException('Invalid withdraw amount.');
         }
 
         $result = [];
-        while ($noteValue > 0) {
-            $noteResult = $this->notes->getQuantityMax($noteValue);
+        while ($value > 0) {
+            $noteResult = $this->notes->getQuantityMax($value);
             $result = array_merge($result, array_fill(0, $noteResult->getQuantity(), $noteResult->getNote()));
-            $noteValue = $noteResult->getRemainder();
+            $value = $noteResult->getRemainder();
         }
 
         if (rsort($result, SORT_NUMERIC)) {
