@@ -9,9 +9,12 @@ use Xshifty\CashMachine\Domain\ValueObject\NoteResult;
 final class NoteManager implements NoteManagerInterface
 {
     private $availableNotes = [];
+    private $notesIndexCache = 0;
 
     public function setAvailableNotes(array $noteValues): bool
     {
+        $this->notesIndexCache = 0;
+
         $this->availableNotes = array_map(function ($value) {
             return floatval($value);
         }, $noteValues);
@@ -27,17 +30,20 @@ final class NoteManager implements NoteManagerInterface
 
     public function getQuantityMax(float $value): NoteResult
     {
-        $pos = 0;
-
-        while (isset($this->availableNotes[$pos]) && $this->availableNotes[$pos] > $value) {
-            $pos++;
+        if ($this->availableNotes[$this->notesIndexCache] < $value) {
+            $this->notesIndexCache = 0;
         }
 
-        if (!isset($this->availableNotes[$pos])) {
+        while (isset($this->availableNotes[$this->notesIndexCache])
+                && $this->availableNotes[$this->notesIndexCache] > $value) {
+            $this->notesIndexCache++;
+        }
+
+        if (!isset($this->availableNotes[$this->notesIndexCache])) {
             throw new NoteUnavailableException('Not have all needed notes available for this amount.');
         }
 
-        $note = $this->availableNotes[$pos];
+        $note = $this->availableNotes[$this->notesIndexCache];
 
         return $this->calculateNoteResult($note, $value);
     }
