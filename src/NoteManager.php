@@ -32,7 +32,7 @@ final class NoteManager implements NoteManagerInterface
         });
 
         if (count($filterResult) < 1) {
-            throw new NoteUnavailableException('Invalid value');
+            throw new NoteUnavailableException('Not have all needed notes available for this amount.');
         }
 
         $note = reset($filterResult);
