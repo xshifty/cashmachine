@@ -27,15 +27,23 @@ final class NoteManager implements NoteManagerInterface
 
     public function getQuantityMax(float $value): NoteResult
     {
-        $filterResult = array_filter($this->availableNotes, function ($note) use ($value) {
-            return floatval($value) >= floatval($note);
-        });
+        $pos = 0;
 
-        if (count($filterResult) < 1) {
+        while (isset($this->availableNotes[$pos]) && $this->availableNotes[$pos] > $value) {
+            $pos++;
+        }
+
+        if (!isset($this->availableNotes[$pos])) {
             throw new NoteUnavailableException('Not have all needed notes available for this amount.');
         }
 
-        $note = reset($filterResult);
+        $note = $this->availableNotes[$pos];
+
+        return $this->calculateNoteResult($note, $value);
+    }
+
+    private function calculateNoteResult(float $note, float $value): NoteResult
+    {
         $quantity = intval($value / $note);
         $remainder = intval($value % $note);
 
