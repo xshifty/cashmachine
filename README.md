@@ -16,7 +16,7 @@ $ composer install -o
 The following command will start a simple http server in your localhost:9000
 
 ```
-$ php -S localhost:9000 index.php
+$ composer run
 ```
 
 Now access this url in your browser *http://localhost:9000/withdraw?amount=some_amount*
@@ -26,5 +26,5 @@ Now access this url in your browser *http://localhost:9000/withdraw?amount=some_
 Execute this command to run the test
 
 ```
-$ vendor/bin/phpunit --bootstrap vendor/autoload.php test/
+$ composer test
 ```
