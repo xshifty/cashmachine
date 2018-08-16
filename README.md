@@ -1,5 +1,8 @@
 # Cash Machine
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xshifty/cashmachine/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xshifty/cashmachine/build-status/master) 
+[![Build Status](https://scrutinizer-ci.com/g/xshifty/cashmachine/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xshifty/cashmachine/build-status/master)
+
 Simple Cash Machine api.
 
 ## Setting up the application
