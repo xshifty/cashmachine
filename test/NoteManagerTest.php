@@ -29,10 +29,20 @@ final class NoteManagerTest extends TestCase
         $this->noteManager->setAvailableNotes([100, 50, 20, 10]);
         
         $result = $this->noteManager->getQuantityMax(560.0);
-        
         $this->assertEquals($result->getNote(), 100.0);
         $this->assertEquals($result->getQuantity(), 5);
         $this->assertEquals($result->getRemainder(), 60.0);
+
+        $result = $this->noteManager->getQuantityMax(70);
+        $this->assertEquals($result->getNote(), 50.0);
+        $this->assertEquals($result->getQuantity(), 1);
+        $this->assertEquals($result->getRemainder(), 20.0);
+
+        $result = $this->noteManager->getQuantityMax(330);
+        $this->assertEquals($result->getNote(), 100.0);
+        $this->assertEquals($result->getQuantity(), 3);
+        $this->assertEquals($result->getRemainder(), 30.0);
+
     }
 
     public function testUnavailableNote()
