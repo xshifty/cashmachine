@@ -1,41 +1,35 @@
 <?php
 declare(strict_types=1);
 
-namespace Xshifty\CashMachine\Domain;
+namespace Xshifty\CashMachine\Application\Service;
 
 use \InvalidArgumentException;
 use \Xshifty\CashMachine\Domain\Exception\NoteUnavailableException;
+use \Xshifty\CashMachine\Domain\Service\CashDispenserInterface;
 
 final class CashMachine implements CashMachineInterface
 {
-    private $availableNotes;
+    private $cashDispenser;
+
+    public function __construct(CashDispenserInterface $cashDispenser)
+    {
+        $this->cashDispenser = $cashDispenser;
+    }
     
-    public function setAvailableNotes(array $availableNotes)
-    {
-        $this->availableNotes = array_map(function ($note) {
-            return floatval($note);
-        }, $availableNotes);
-
-        $this->availableNotes = array_filter(array_unique($this->availableNotes));
-        rsort($this->availableNotes, SORT_NUMERIC);
-    }
-
-    public function getAvailableNotes(): array
-    {
-        return $this->availableNotes;
-    }
-
     public function withdraw($amount): array
     {
         if (!$this->checkAmount($amount)) {
             return [];
         }
 
+        $availableNotes = $this->cashDispenser->getAvailableNotes();
         $withdrawResult = [];
         $remainder = $amount;
 
-        foreach ($this->availableNotes as $note) {
-            $withdrawResult = array_merge($withdrawResult, $this->getNoteBatch($note, $remainder));
+        foreach ($availableNotes as $note) {
+            $withdrawResult = array_merge(
+                $withdrawResult,
+                $this->cashDispenser->getNoteBatch($note, $remainder));
             $remainder = intval($remainder % $note);
         }
 
@@ -44,16 +38,6 @@ final class CashMachine implements CashMachineInterface
         }
 
         return $withdrawResult;
-    }
-
-    private function getNoteBatch(float $note, float $amount)
-    {
-        if ($note > $amount) {
-            return [];
-        }
-
-        $quantity = intval($amount / $note);
-        return array_fill(0, $quantity, $note);
     }
 
     private function checkAmount($amount)

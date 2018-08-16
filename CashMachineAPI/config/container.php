@@ -1,7 +1,12 @@
 <?php
-$container['cashMachineService'] = function () use ($container) {
-    $cashMachineService = new \Xshifty\CashMachine\Domain\CashMachine();
-    $cashMachineService->setAvailableNotes([100, 50, 20, 10]);
+$container['cashDispenser'] = function () {
+    return new \Xshifty\CashMachine\Domain\Service\CashDispenser([
+        100, 50, 20, 10
+    ]);
+};
 
-    return $cashMachineService;
+$container['cashMachine'] = function () use ($container) {
+    return new \Xshifty\CashMachine\Application\Service\CashMachine(
+        $container['cashDispenser']
+    );
 };

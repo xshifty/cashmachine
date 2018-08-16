@@ -18,7 +18,7 @@ final class MainController extends BaseController
         }
 
         return json_encode(
-            $this->container['cashMachineService']->withdraw($amount)
+            $this->container['cashMachine']->withdraw($amount)
         );
     }
 }
