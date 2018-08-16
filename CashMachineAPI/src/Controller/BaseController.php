@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xshifty\CashMachine\App\Controller;
+namespace Xshifty\CashMachineAPI\Controller;
 
 use \Interop\Container\ContainerInterface;
 

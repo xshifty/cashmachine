@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Xshifty\CashMachine\Test;
+namespace Xshifty\CashMachine\Test\Domain;
 
 use \InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
