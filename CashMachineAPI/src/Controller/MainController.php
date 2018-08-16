@@ -10,13 +10,15 @@ final class MainController extends BaseController
 {
     public function withdraw(Request $request, Response $response, $args)
     {
+        $amount = null;
         $params = $request->getQueryParams();
         
-        if (!isset($params['amount'])) {
-            $params['amount'] = NULL;
+        if (isset($params['amount'])) {
+            $amount = floatval($params['amount']);
         }
 
-        $result = $this->container['service.cashMachine']->withdraw($params['amount']);
-        return json_encode($result);
+        return json_encode(
+            $this->container['cashMachineService']->withdraw($amount)
+        );
     }
 }

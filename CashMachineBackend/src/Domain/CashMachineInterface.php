@@ -5,5 +5,7 @@ namespace Xshifty\CashMachine\Domain;
 
 interface CashMachineInterface
 {
-    public function withdraw($value): array;
+    public function setAvailableNotes(array $availableNotes);
+    public function getAvailableNotes(): array;
+    public function withdraw($amount): array;
 }
