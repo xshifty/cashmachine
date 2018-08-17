@@ -1,29 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Xshifty\CashMachine\Test\Domain;
+namespace Xshifty\CashMachine\Test\Application\Service;
 
 use \InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use Xshifty\CashMachine\Domain\CashMachine;
-use Xshifty\CashMachine\Domain\Exception\NoteUnavailableException;
+use \PHPUnit\Framework\TestCase;
+use \Xshifty\CashMachine\Domain\Exception\NoteUnavailableException;
+use \Xshifty\CashMachine\Domain\Service\CashDispenser;
+use \Xshifty\CashMachine\Application\Service\CashMachine;
 
 final class CashMachineTest extends TestCase
 {
     private $cashMachine;
-
-    public function testNotesAvailability()
-    {
-        $this->cashMachine = new CashMachine();
-        $this->cashMachine->setAvailableNotes([10, 100.0, '50', 20]);
-
-        $expected = [100.0, 50.0, 20.0, 10.0];
-
-        $this->assertEquals(
-            $this->cashMachine->getAvailableNotes(),
-            $expected
-        );
-    }
 
     public function testWithdraw()
     {
@@ -63,8 +51,14 @@ final class CashMachineTest extends TestCase
 
     public function testBigNotesDataset()
     {
-        $cashMachine = new CashMachine();
-        $cashMachine->setAvailableNotes([10000, 5000, 4000, 3000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 1]);
+        $cashDispenser = new CashDispenser([
+            10000, 5000, 4000, 3000, 2000, 1000,
+            500, 200, 100,
+            50, 20, 10,
+            5, 1
+        ]);
+
+        $cashMachine = new CashMachine($cashDispenser);
 
         $expected = array_fill(0, 51, 10000.0);
         $expected = array_merge($expected, array_fill(0, 1, 5000.0));
@@ -81,7 +75,7 @@ final class CashMachineTest extends TestCase
 
     public function setUp()
     {
-        $this->cashMachine = new CashMachine();
-        $this->cashMachine->setAvailableNotes([100, 50, 20, 10]);
+        $cashDispenser = new CashDispenser([100, 50, 20, 10]);
+        $this->cashMachine = new CashMachine($cashDispenser);
     }
 }
