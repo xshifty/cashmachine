@@ -7,7 +7,7 @@ $container = $app->getContainer();
 include __DIR__ . '/../config/container.php';
 include __DIR__ . '/../config/routes.php';
 
-$app->add(function ($request, $response, $next) {
+$app->add(function($request, $response, $next) {
     try {
         $response = $next($request, $response);
         return $response->withHeader('Content-Type', 'application/json');
