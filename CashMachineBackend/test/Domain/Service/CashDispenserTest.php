@@ -19,7 +19,7 @@ final class CashDispenserTest extends TestCase
         $expected = [100.0, 50.0, 20.0, 10.0];
 
         $this->assertEquals(
-            $this->cashDispenser->getAvailableNotes(),
+            $cashDispenser->getAvailableNotes(),
             $expected
         );
     }
