@@ -19,13 +19,19 @@ final class CashDispenser implements CashDispenserInterface
         return $this->availableNotes;
     }
 
-    public function getNoteBatch(float $note, float $amount): array
+    public function getNoteBatch(float $note, float $amount, int $ignoreNoteIndex = null): array
     {
         if (!in_array($note, $this->availableNotes)) {
             throw new NoteUnavailableException("Note {$note} isn't available.");
         }
 
         if ($note > $amount) {
+            return [];
+        }
+
+        if (!empty($ignoreNoteIndex)
+            && array_key_exists($ignoreNoteIndex, $this->availableNotes)
+            && $note == $this->availableNotes[$ignoreNoteIndex]) {
             return [];
         }
 
