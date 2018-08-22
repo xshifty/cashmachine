@@ -15,10 +15,15 @@ final class CashMachine implements CashMachineInterface
     public function __construct(CashDispenserInterface $cashDispenser)
     {
         $this->cashDispenser = $cashDispenser;
-        $this->ignoreNoteIndex = count($this->cashDispenser->getAvailableNotes());
     }
 
     public function withdraw($amount): array
+    {
+        $this->ignoreNoteIndex = count($this->cashDispenser->getAvailableNotes());
+        return $this->recursiveWithdraw($amount);
+    }
+
+    private function recursiveWithdraw($amount): array
     {
         if (!$this->checkAmount($amount)) {
             return [];
@@ -40,7 +45,7 @@ final class CashMachine implements CashMachineInterface
 
         if ($remainder > 0) {
             $this->ignoreNoteIndex--;
-            return $this->withdraw($amount);
+            return $this->recursiveWithdraw($amount);
         }
 
         return $withdrawResult;
