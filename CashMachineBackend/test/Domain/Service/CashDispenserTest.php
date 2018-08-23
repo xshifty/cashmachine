@@ -48,6 +48,11 @@ final class CashDispenserTest extends TestCase
         $this->cashDispenser->getNoteBatch(200, 300);
     }
 
+    public function testGetNoteBatchZeroAmount()
+    {
+        $this->assertEquals($this->cashDispenser->getNoteBatch(20, 0), []);
+    }
+
     public function setUp()
     {
         $this->cashDispenser = new CashDispenser([100, 50, 20, 10]);

@@ -6,5 +6,5 @@ namespace Xshifty\CashMachine\Domain\Service;
 interface CashDispenserInterface
 {
     public function getAvailableNotes(): array;
-    public function getNoteBatch(float $note, float $amount): array;
+    public function getNoteBatch(float $note, float $amount, int $ignoreNoteIndex = null): array;
 }
