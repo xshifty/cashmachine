@@ -10,7 +10,6 @@ use \Xshifty\CashMachine\Domain\Service\CashDispenserInterface;
 final class CashMachine implements CashMachineInterface
 {
     private $cashDispenser;
-    private $ignoreNoteIndex;
 
     public function __construct(CashDispenserInterface $cashDispenser)
     {
@@ -19,36 +18,13 @@ final class CashMachine implements CashMachineInterface
 
     public function withdraw($amount): array
     {
-        $this->ignoreNoteIndex = count($this->cashDispenser->getAvailableNotes());
-        return $this->recursiveWithdraw($amount);
-    }
-
-    private function recursiveWithdraw($amount): array
-    {
         if (!$this->checkAmount($amount)) {
             return [];
         }
 
-        $availableNotes = $this->cashDispenser->getAvailableNotes();
-        $withdrawResult = [];
-        $remainder = $amount;
-
-        foreach ($availableNotes as $note) {
-            $batch = $this->cashDispenser->getNoteBatch($note, $remainder, $this->ignoreNoteIndex);
-            $withdrawResult = array_merge($withdrawResult, $batch);
-            $remainder = intval($remainder - array_sum($batch));
-        }
-
-        if ($remainder > 0 && $this->ignoreNoteIndex < 1) {
-            throw new NoteUnavailableException('Not have all needed notes available for this amount.');
-        }
-
-        if ($remainder > 0) {
-            $this->ignoreNoteIndex--;
-            return $this->recursiveWithdraw($amount);
-        }
-
-        return $withdrawResult;
+        return array_map(function ($note) {
+            return $note[1];
+        }, $this->cashDispenser->getNoteBatch($amount));
     }
 
     private function checkAmount($amount)

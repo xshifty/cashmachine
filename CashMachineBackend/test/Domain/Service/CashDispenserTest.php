@@ -15,42 +15,30 @@ final class CashDispenserTest extends TestCase
     public function testGetAvailability()
     {
         $cashDispenser = new CashDispenser([10, 100.0, '50', 20]);
-
         $expected = [100.0, 50.0, 20.0, 10.0];
-
-        $this->assertEquals(
-            $cashDispenser->getAvailableNotes(),
-            $expected
-        );
+        $this->assertEquals($cashDispenser->getAvailableNotes(), $expected);
     }
 
     public function testGetNoteBatch()
     {
-        $this->assertEquals(
-            $this->cashDispenser->getNoteBatch(100, 530),
-            array_fill(0, 5, 100.0)
-        );
+        $expected = array_fill(0, 5, [0, 100.0]);
+        $expected = array_merge($expected, [[2, 20.0], [3, 10.0]]);
+        $this->assertEquals($this->cashDispenser->getNoteBatch(530), $expected);
 
-        $this->assertEquals(
-            $this->cashDispenser->getNoteBatch(50, 60),
-            [50.0]
-        );
-
-        $this->assertEquals(
-            $this->cashDispenser->getNoteBatch(100, 230),
-            array_fill(0, 2, 100.0)
-        );
+        $expected = array_fill(0, 3, [0, 100.0]);
+        $expected = array_merge($expected, array_fill(0, 2, [2, 20.0]));
+        $this->assertEquals($this->cashDispenser->getNoteBatch(340), $expected);
     }
 
     public function testGetNoteBatchInvalidNote()
     {
         $this->expectException(NoteUnavailableException::class);
-        $this->cashDispenser->getNoteBatch(200, 300);
+        $this->cashDispenser->getNoteBatch(305);
     }
 
     public function testGetNoteBatchZeroAmount()
     {
-        $this->assertEquals($this->cashDispenser->getNoteBatch(20, 0), []);
+        $this->assertEquals($this->cashDispenser->getNoteBatch(0), []);
     }
 
     public function setUp()

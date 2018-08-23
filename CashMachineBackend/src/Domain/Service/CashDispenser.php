@@ -19,24 +19,66 @@ final class CashDispenser implements CashDispenserInterface
         return $this->availableNotes;
     }
 
-    public function getNoteBatch(float $note, float $amount, int $ignoreNoteIndex = null): array
+    public function getNoteBatch(float $amount): array
     {
-        if (!in_array($note, $this->availableNotes)) {
-            throw new NoteUnavailableException("Note {$note} isn't available.");
+        $current = 0;
+        $stack = [];
+        $note = 0;
+        $count = 0;
+        
+        while ($amount > 0) {
+            $this->resolveAmount($amount, $current, $note, $count, $stack);
         }
 
-        if ($note > $amount) {
-            return [];
+        return $stack;
+    }
+
+    private function resolveAmount(float &$amount, int &$current, float &$note, int &$count, array &$stack): bool
+    {
+        if (isset($this->availableNotes[$current])) {
+            $note = $this->availableNotes[$current];
+            $count = intval($amount / $note);
         }
 
-        if (!empty($ignoreNoteIndex)
-            && array_key_exists($ignoreNoteIndex, $this->availableNotes)
-            && $note == $this->availableNotes[$ignoreNoteIndex]) {
-            return [];
+        $current++;
+        if ($count > 0) {
+            array_push($stack, [--$current, $note]);
+            $amount -= $note;
         }
 
-        $quantity = intval($amount / $note);
-        return array_fill(0, $quantity, $note);
+        if ($amount == 0) {
+            return true;
+        }
+
+        if ($amount > 0 && $current > count($this->availableNotes)) {
+            $this->resolveAmountIterative($note, $amount, $current, $stack);
+        }
+
+        if ($current >= count($this->availableNotes) && count($stack) == 0) {
+            throw new NoteUnavailableException('Not have all needed notes available for this amount.');
+        }
+
+        return false;
+    }
+
+    private function resolveAmountIterative(float $note, float &$amount, int &$current, array &$stack)
+    {
+        $done = false;
+        while (!$done && count($stack) > 0) {
+            $wrong = array_pop($stack);
+            $amount += $wrong[1];
+            $done = $this->verifyWrongStep($note, $current, $wrong);
+        }
+    }
+
+    private function verifyWrongStep(float $note, int &$current, array $wrong): bool
+    {
+        if ($wrong[1] != $note) {
+            $current = $wrong[0] + 1;
+            return true;
+        }
+
+        return false;
     }
 
     private function setAvailableNotes(array $availableNotes)

@@ -63,6 +63,14 @@ final class CashMachineTest extends TestCase
             $cashMachine->withdraw(380),
             [100, 100, 100, 20, 20, 20, 20]
         );
+
+        $cashDispenser = new CashDispenser([30, 16, '100']);
+        $cashMachine = new CashMachine($cashDispenser);
+
+        $this->assertEquals(
+            $cashMachine->withdraw(362),
+            [100, 100, 100, 30, 16, 16]
+        );
     }
 
     public function testBigNotesDataset()
